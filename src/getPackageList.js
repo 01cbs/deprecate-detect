@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+import { promises as fs } from 'fs';
 
 async function getPackageList(filePath) {
   const content = await fs.readFile(filePath, 'utf-8');
@@ -10,4 +10,4 @@ async function getPackageList(filePath) {
   return dependencies;
 }
 
-module.exports = getPackageList;
+export default getPackageList;

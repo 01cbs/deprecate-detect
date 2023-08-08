@@ -1,9 +1,8 @@
-const fs = require('fs').promises;
-
-const chalk = require('chalk');
-const semver = require('semver');
-const cleanVersion = require('./cleanVersion.js');
-const axios = require('axios');
+import { promises as fs } from 'fs';
+import chalk from 'chalk';
+import semver from 'semver';
+import cleanVersion from './cleanVersion.js';
+import axios from 'axios';
 
 async function checkPackagesForYarn(packages) {
   const deprecatedPackages = [];
@@ -44,4 +43,4 @@ async function checkPackagesForYarn(packages) {
   };
 }
 
-module.exports = checkPackagesForYarn;
+export default checkPackagesForYarn;
