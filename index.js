@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-const path = require('path');
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
-
-const checkDeprecatedForNpm = require('./src/checkDeprecatedForNpm.js');
-const checkPackagesForYarn = require('./src/checkPackagesForYarn.js');
-const getPackageList = require('./src/getPackageList.js');
+import path from 'path';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import checkDeprecatedForNpm from './src/checkDeprecatedForNpm.js';
+import checkPackagesForYarn from './src/checkPackagesForYarn.js';
+import getPackageList from './src/getPackageList.js';
 
 async function main() {
   const argv = yargs(hideBin(process.argv)).options({
@@ -43,24 +42,41 @@ async function main() {
   const packages = await getPackageList(packagePath);
 
   if (argv.npm) {
-    const deprecatedNpmPackages = await checkDeprecatedForNpm(packages);
-    // TODO: Print results in a user-friendly way
-  }
+    const resultsNpm = await checkDeprecatedForNpm(packages);
 
-  if (argv.yarn) {
-    const results = await checkPackagesForYarn(packages);
-
-    if (results.deprecated.length > 0 || results.major.length > 0) {
-      if (results.deprecated.length > 0) {
-        console.log('\nDeprecated Yarn packages found:');
-        for (const pkg of results.deprecated) {
+    if (resultsNpm.deprecated.length > 0 || resultsNpm.major.length > 0) {
+      if (resultsNpm.deprecated.length > 0) {
+        console.log('\nDeprecated npm packages found:');
+        for (const pkg of resultsNpm.deprecated) {
           console.log(`- ${pkg.name}@${pkg.version} -> ${pkg.latestVersion}: ${pkg.reason}`);
         }
       }
 
-      if (results.major.length > 0) {
+      if (resultsNpm.major.length > 0) {
+        console.log('\nMajor updates available for npm packages:');
+        for (const pkg of resultsNpm.major) {
+          console.log(`- ${pkg.name}@${pkg.version} -> ${pkg.latestVersion}: ${pkg.reason}`);
+        }
+      }
+    } else {
+      console.log('\nNo deprecated or major updates found for npm packages.');
+    }
+  }
+
+  if (argv.yarn) {
+    const resultsYarn = await checkPackagesForYarn(packages);
+
+    if (resultsYarn.deprecated.length > 0 || resultsYarn.major.length > 0) {
+      if (resultsYarn.deprecated.length > 0) {
+        console.log('\nDeprecated Yarn packages found:');
+        for (const pkg of resultsYarn.deprecated) {
+          console.log(`- ${pkg.name}@${pkg.version} -> ${pkg.latestVersion}: ${pkg.reason}`);
+        }
+      }
+
+      if (resultsYarn.major.length > 0) {
         console.log('\nMajor updates available:');
-        for (const pkg of results.major) {
+        for (const pkg of resultsYarn.major) {
           console.log(`- ${pkg.name}@${pkg.version} -> ${pkg.latestVersion}: ${pkg.reason}`);
         }
       }
