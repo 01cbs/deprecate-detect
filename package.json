@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "Draft project for deprecation tracking packages",
   "main": "index.js",
+  "type": "module",
+  "module": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Dima Barabash (dbarabashdev@gmail.com)",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.4.0",
