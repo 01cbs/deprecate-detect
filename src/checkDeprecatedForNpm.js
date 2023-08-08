@@ -6,15 +6,13 @@ async function checkDeprecatedForNpm(packages) {
   const deprecatedPackages = [];
   const majorUpdatePackages = [];
 
-  for (const [index, pkg] of Object.entries(packages)) {
-    const name = pkg.name;
-    const rawVersion = pkg.version;
+  for (const pkg of packages) {
+    const { name, version } = pkg;
+    const cleanedVersion = cleanVersion(version);
 
-    const version = cleanVersion(rawVersion);
-
-    if (typeof version !== 'string') {
+    if (typeof cleanedVersion !== 'string') {
       console.error(
-        `Error checking ${name}: Invalid version type. Expected a string, got ${typeof version}.`
+        `Error checking ${name}: Invalid version type. Expected a string, got ${typeof cleanedVersion}.`
       );
       continue;
     }
@@ -28,24 +26,29 @@ async function checkDeprecatedForNpm(packages) {
         continue;
       }
 
-      if (!response.data.versions[version]) {
-        console.error(`Error checking ${name}: Version ${version} not found in npm registry.`);
+      if (!response.data.versions[cleanedVersion]) {
+        console.error(
+          `Error checking ${name}: Version ${cleanedVersion} not found in npm registry.`
+        );
         continue;
       }
 
-      if (response.data.versions[version].deprecated) {
+      if (response.data.versions[cleanedVersion].deprecated) {
         deprecatedPackages.push({
           name: name,
-          version: version,
+          version: cleanedVersion,
           latestVersion: latestVersion,
-          reason: response.data.versions[version].deprecated,
+          reason: response.data.versions[cleanedVersion].deprecated,
         });
       }
 
-      if (semver.lt(version, latestVersion) && semver.diff(version, latestVersion) === 'major') {
+      if (
+        semver.lt(cleanedVersion, latestVersion) &&
+        semver.diff(cleanedVersion, latestVersion) === 'major'
+      ) {
         majorUpdatePackages.push({
           name: name,
-          version: version,
+          version: cleanedVersion,
           latestVersion: latestVersion,
           reason: 'Major update available.',
         });
