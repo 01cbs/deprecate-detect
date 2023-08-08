@@ -1,9 +1,9 @@
-const fs = require("fs").promises;
+const fs = require('fs').promises;
 
-const chalk = require("chalk");
-const semver = require("semver");
-const cleanVersion = require("./cleanVersion.js");
-const axios = require("axios");
+const chalk = require('chalk');
+const semver = require('semver');
+const cleanVersion = require('./cleanVersion.js');
+const axios = require('axios');
 
 async function checkPackagesForYarn(packages) {
   const deprecatedPackages = [];
@@ -11,11 +11,9 @@ async function checkPackagesForYarn(packages) {
 
   for (const pkg of packages) {
     try {
-      const response = await axios.get(
-        `https://registry.yarnpkg.com/${pkg.name}`
-      );
+      const response = await axios.get(`https://registry.yarnpkg.com/${pkg.name}`);
       const data = response.data;
-      const latestVersion = data["dist-tags"].latest;
+      const latestVersion = data['dist-tags'].latest;
       const cleanedVersion = cleanVersion(pkg.version);
 
       if (data.versions[latestVersion].deprecated) {
@@ -31,7 +29,7 @@ async function checkPackagesForYarn(packages) {
           name: pkg.name,
           version: cleanedVersion,
           latestVersion,
-          reason: "Major update available",
+          reason: 'Major update available',
           updateType: chalk.red,
         });
       }

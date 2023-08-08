@@ -12,7 +12,7 @@
 // Reason for Removing the Caret: When working programmatically with versions (like when comparing them or fetching details from a registry), you often want to work with the exact version specified, not a range. Removing characters like ^ helps with this.
 
 function cleanVersion(version) {
-  return version.replace("^", "");
+  return version.replace('^', '');
 }
 
 module.exports = cleanVersion;
